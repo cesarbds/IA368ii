@@ -36,6 +36,14 @@ pip install --upgrade setuptools==70.0.0
 And building the package again.
 
 ## Launch YOLO Detection Nodes
+### Installing dependencies
+
+Use **pip** to install **ultralytics** (this may take a few minutes):
+
+```
+pip install ultralytics
+```
+
 ### Initiate the scene **tf_scene.ttt**
 
 The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
