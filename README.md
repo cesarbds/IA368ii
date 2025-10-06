@@ -1,22 +1,39 @@
 # IA368ii
-Official repository for the class IA368ii 2025S2:
+Official repository for IA368ii 2025S2 classes:
 - `ia368_pkg`: main package with YOLO detection and CoppeliaSim remote API nodes.
 - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, and autodocking.
 
----
+# How to use
 
-## Clone the repository::
+## Clone the repository:
+
+Since this repo contains the whole workspace for IA368ii classes, not just the packages, you don't need to / shouldn't clone it inside your ROS 2 workspace.
+
 ```bash
 git clone https://github.com/cesarbds/IA368ii.git
 ```
 ## Build the Workspace
 Use **colcon** to build all packages:
 ```bash
-cd IA368ii
+cd IA368ii/IA368_ws
 colcon build
 source install/setup.bash
 ```
-**You need to source this every new terminal session before running ROS 2 commands.**
+Add ```--packages-select ia368_pkg``` to build just the ia368_pkg.
+
+**You need to source this workspace for every new terminal session before running ROS 2 commands. You could add the source command to your ```bashrc``` file.**
+
+### Troubleshooting
+
+If you get the following error:
+```
+TypeError: canonicalize_version() got an unexpected keyword argument 'strip_trailing_zero'
+```
+This error was caused by using setuptools >= 71.0.0. You can fix it by downgrading to 70.x:
+```
+pip install --upgrade setuptools==70.0.0
+```
+And building the package again.
 
 ## Launch YOLO Detection Nodes
 ### Initiate the scene **tf_scene.ttt**
@@ -46,4 +63,3 @@ This will start all autodocking nodes:
 - bumper_and_velocity_node
 - charging_base_node
 - docking_node
-
