@@ -5,20 +5,20 @@ Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2
 
 # Table of Content
 
-1. [How to use](#markdown-header-project-how-to-use)
-    1. [Installing dependencies](#markdown-header-installing-dependencies-project)
-    2. [Clone the repository](#markdown-header-clone-the-repository)
-    3. [Build the workspace](#markdown-header-build-the-workspace)
-        1. [Troubleshooting](#markdown-header-troubleshooting-project)
-2. [Launch YOLO Detection Nodes](#markdown-header-yolo-detection-nodes)
-    1. [Installing dependencies (Ubuntu 22.04)](#markdown-header-installing-dependencies-yolo-22)
-    2. [Installing dependencies (Ubuntu 24.04)](#markdown-header-installing-dependencies-yolo-24)
-        1. [Troubleshooting](#markdown-header-troubleshooting-yolo)
-    3. [Initiate the scene **tf_scene.ttt**](#markdown-header-scene-yolo)
-3. [Launch CoppeliaSim Remote API Bridge (Autodocking)](#markdown-header-autodocking)
-    1. [Initiate the scene **Evaluation scene3.2_students.ttt**](#markdown-header-scene-autodocking)
+1. [How to use the workspace](#how-to-use-the-workspace)
+    1. [Installing dependencies](#installing-dependencies)
+    2. [Clone the repository](#clone-the-repository)
+    3. [Build the workspace](#build-the-workspace)
+        1. [Troubleshooting](#troubleshooting)
+2. [Launch YOLO Detection Nodes](#launch-yolo-detection-nodes)
+    1. [Installing dependencies (Ubuntu 22.04)](#installing-dependencies-ubuntu-2204)
+    2. [Installing dependencies (Ubuntu 24.04)](#installing-dependencies-ubuntu-2404)
+        1. [Troubleshooting](#troubleshooting-1)
+    3. [Initiate the scene **tf_scene.ttt**](#initiate-the-scene-tf_scenettt)
+3. [Launch CoppeliaSim Remote API Bridge (Autodocking)](#launch-coppeliasim-remote-api-bridge-autodocking)
+    1. [Initiate the scene **Evaluation scene3.2_students.ttt**](#initiate-the-scene-evaluation-scene32_studentsttt)
 
-# How to use
+# How to use the workspace
 
 ## Installing dependencies
 
