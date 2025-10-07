@@ -35,7 +35,7 @@ setup(
 	        "charging_base_node = autodocking.charging_base_node:main",
 	        "docking_node = autodocking.docking_node:main",
 	        "odom_node = position_control.odom_node:main",
-	        "pos_control_node = position_control.position_control_node:main",
+	        "pos_control_node = position_control.position_control_node_students:main",
 	        "vel_node = position_control.velocity_node:main",
 	        "target_node = position_control.target_node:main",
         ],
