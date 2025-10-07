@@ -5,7 +5,18 @@ Official repository for IA368ii 2025S2 classes:
 
 # How to use
 
-## Clone the repository:
+## Installing dependencies
+
+A common dependency for all scripts in this repository is the `coppeliasim-zmqremoteapi-client` library. Use **pip** to install it:
+```
+pip install coppeliasim-zmqremoteapi-client
+```
+If you are using Ubuntu >= 24.04, you may need to use the `--break-system-packages`option:
+```
+pip install coppeliasim-zmqremoteapi-client --break-system-packages
+```
+
+## Clone the repository
 
 Since this repo contains the whole workspace for IA368ii classes, not just the packages, you don't need to / shouldn't clone it inside your ROS 2 workspace.
 
@@ -19,7 +30,7 @@ cd IA368ii/IA368_ws
 colcon build
 source install/setup.bash
 ```
-Add ```--packages-select ia368_pkg``` to build just the ia368_pkg.
+Add ```--packages-select ia368_pkg``` to build just the package `ia368_pkg`.
 
 **You need to source this workspace for every new terminal session before running ROS 2 commands. You could add the source command to your ```bashrc``` file.**
 
@@ -29,7 +40,7 @@ If you get the following error:
 ```
 TypeError: canonicalize_version() got an unexpected keyword argument 'strip_trailing_zero'
 ```
-This error was caused by using setuptools >= 71.0.0. You can fix it by downgrading to 70.x:
+This error may be caused by using `setuptools >= 71.0.0`. You can fix it by downgrading to `70.x`:
 ```
 pip install --upgrade setuptools==70.0.0
 ```
