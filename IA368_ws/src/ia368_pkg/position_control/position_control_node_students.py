@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, Pose2D
 from nav_msgs.msg import Odometry
-from tf_transformations import euler_from_quaternion
+from scipy.spatial.transform import Rotation as R
 
 
 class SiegwartController(Node):
@@ -60,7 +60,9 @@ class SiegwartController(Node):
 
         # Convert quaternion -> yaw
         q = msg.pose.pose.orientation
-        _, _, yaw = euler_from_quaternion([q.x, q.y, q.z, q.w])
+        r = R.from_quat([q.x, q.y, q.z, q.w])  # x, y, z, w order
+        euler = r.as_euler('xyz')               # returns [roll, pitch, yaw] in radians
+        yaw = euler[2]
         self.robot_pose.theta = yaw
 
     def goal_callback(self, msg: Pose2D):
