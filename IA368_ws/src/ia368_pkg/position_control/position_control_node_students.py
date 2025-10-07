@@ -36,11 +36,11 @@ class SiegwartController(Node):
         self.goal_received = False
 
         # Subscribers
-        self.create_subscription(Odometry, "/odom", self.odom_callback, 10)
-        self.create_subscription(Pose2D, "/goal", self.goal_callback, 10)
+        self.create_subscription(Odometry, "myRobot/odom", self.odom_callback, 10)
+        self.create_subscription(Pose2D, "myRobot/goal", self.goal_callback, 10)
 
         # Publisher
-        self.cmd_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+        self.cmd_pub = self.create_publisher(Twist, "myRobot/cmd_vel", 10)
 
         # Control loop timer
         self.timer = self.create_timer(0.05, self.control_loop)  # 20 Hz
