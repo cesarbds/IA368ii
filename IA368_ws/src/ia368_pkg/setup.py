@@ -18,7 +18,7 @@ setup(
     maintainer='adrolab',
     maintainer_email='adrolab.unicamp@gmail.com',
     description='Package to be used in the IA368 class',
-    license='TODO: License declaration',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',
