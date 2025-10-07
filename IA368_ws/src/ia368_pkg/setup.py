@@ -18,7 +18,7 @@ setup(
     maintainer='adrolab',
     maintainer_email='adrolab.unicamp@gmail.com',
     description='Package to be used in the IA368 class',
-    license='Apache-2.0',
+    license='TODO: License declaration',
     extras_require={
         'test': [
             'pytest',
@@ -34,6 +34,10 @@ setup(
 	        "bumper_and_velocity_node = autodocking.bumper_and_velocity_node:main",
 	        "charging_base_node = autodocking.charging_base_node:main",
 	        "docking_node = autodocking.docking_node:main",
+	        "odom_node = position_control.odom_node:main",
+	        "pos_control_node = position_control.position_control_node:main",
+	        "vel_node = position_control.velocity_node:main",
+	        "target_node = position_control.target_node:main",
         ],
     },
 )
