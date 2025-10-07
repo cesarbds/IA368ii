@@ -1,7 +1,22 @@
 # IA368ii
-Official repository for IA368ii 2025S2 classes:
-- `ia368_pkg`: main package with YOLO detection and CoppeliaSim remote API nodes.
-- Nodes for Kinect, TF, YOLO 3D detection, dummy creation, and autodocking.
+Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
+- `ia368_pkg`: main package with YOLO detection and CoppeliaSim remote API nodes (for now).
+    - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, and autodocking.
+
+# Table of Content
+
+1. [How to use](#markdown-header-project-how-to-use)
+    1. [Installing dependencies](#markdown-header-installing-dependencies-project)
+    2. [Clone the repository](#markdown-header-clone-the-repository)
+    3. [Build the workspace](#markdown-header-build-the-workspace)
+        1. [Troubleshooting](#markdown-header-troubleshooting-project)
+2. [Launch YOLO Detection Nodes](#markdown-header-yolo-detection-nodes)
+    1. [Installing dependencies (Ubuntu 22.04)](#markdown-header-installing-dependencies-yolo-22)
+    2. [Installing dependencies (Ubuntu 24.04)](#markdown-header-installing-dependencies-yolo-24)
+        1. [Troubleshooting](#markdown-header-troubleshooting-yolo)
+    3. [Initiate the scene **tf_scene.ttt**](#markdown-header-scene-yolo)
+3. [Launch CoppeliaSim Remote API Bridge (Autodocking)](#markdown-header-autodocking)
+    1. [Initiate the scene **Evaluation scene3.2_students.ttt**](#markdown-header-scene-autodocking)
 
 # How to use
 
@@ -23,7 +38,7 @@ Since this repo contains the whole workspace for IA368ii classes, not just the p
 ```bash
 git clone https://github.com/cesarbds/IA368ii.git
 ```
-## Build the Workspace
+## Build the workspace
 Use **colcon** to build all packages:
 ```bash
 cd IA368ii/IA368_ws
@@ -46,18 +61,18 @@ pip install --upgrade setuptools==70.0.0
 ```
 And building the package again.
 
-## Launch YOLO Detection Nodes
-### Installing dependencies (Ubuntu 22.04)
+# Launch YOLO Detection Nodes
+## Installing dependencies (Ubuntu 22.04)
 
 Use **pip** to install **ultralytics** (this may take a few minutes):
 ```
 pip install ultralytics
 ```
-### Installing dependencies (Ubuntu 24.04)
+## Installing dependencies (Ubuntu 24.04)
 
 Again, use **pip** to install **ultralytics**, but with some differences (kindly informed by Alfredo Dal'Ava Júnior):
 ```
-pip install ultralytics --no-deps
+pip install ultralytics --no-deps --break-system-packages
 pip install polars requests torchvision ultralytics-thop opencv-python numpy==1.26.4 --break-system-packages
 pip install torch --break-system-packages
 ```
@@ -68,7 +83,7 @@ The package's contents are unknown: no RECORD file was found for Numpy/SciPy.
 ```
 You could use some tips from [Stack Overflow](https://stackoverflow.com/questions/68886239/cannot-uninstall-numpy-1-21-2-record-file-not-found). Basically, you need to manually delete the Numpy/SciPy files/directories and reinstall it.
 
-### Initiate the scene **tf_scene.ttt**
+## Initiate the scene **tf_scene.ttt**
 
 The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
 ```bash
@@ -81,9 +96,9 @@ This will start the following nodes in the yolo_detector namespace:
 - yolo_node
 - dummy_creation_node (optional, depending on dummy)
 
-## Launch CoppeliaSim Remote API Bridge (Autodocking)
+# Launch CoppeliaSim Remote API Bridge (Autodocking)
 
-### Initiate the scene **Evaluation scene3.2_students.ttt**
+## Initiate the scene **Evaluation scene3.2_students.ttt**
 
 To run the ROS 2 ↔ CoppeliaSim bridge:
 ```bash
