@@ -47,13 +47,26 @@ pip install --upgrade setuptools==70.0.0
 And building the package again.
 
 ## Launch YOLO Detection Nodes
-### Installing dependencies
+### Installing dependencies (Ubuntu 22.04)
 
 Use **pip** to install **ultralytics** (this may take a few minutes):
-
 ```
 pip install ultralytics
 ```
+### Installing dependencies (Ubuntu 24.04)
+
+Again, use **pip** to install **ultralytics**, but with some differences (kindly informed by Alfredo Dal'Ava Júnior):
+```
+pip install ultralytics --no-deps
+pip install polars requests torchvision ultralytics-thop opencv-python numpy==1.26.4 --break-system-packages
+pip install torch --break-system-packages
+```
+### Troubleshooting
+If you get the following error:
+```
+The package's contents are unknown: no RECORD file was found for Numpy/SciPy.
+```
+You could use some tips from [Stack Overflow](https://stackoverflow.com/questions/68886239/cannot-uninstall-numpy-1-21-2-record-file-not-found). Basically, you need to manually delete the Numpy/SciPy files/directories and reinstall it.
 
 ### Initiate the scene **tf_scene.ttt**
 
