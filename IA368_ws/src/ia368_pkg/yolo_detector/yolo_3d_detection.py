@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 from ultralytics import YOLO
 import tf2_ros
+import math
 
 ##Instead of using cv_bridge, manually converting to numpy
 def ros_depth_to_numpy(msg: Image):
@@ -17,6 +18,8 @@ def ros_depth_to_numpy(msg: Image):
         dtype = np.float32
     elif msg.encoding in ["16UC1", "16U"]:
         dtype = np.uint16
+    elif msg.encoding in ["8UC1", "8U"]:
+        dtype = np.uint8
     else:
         raise ValueError(f"Unsupported depth encoding: {msg.encoding}")
     
@@ -24,7 +27,7 @@ def ros_depth_to_numpy(msg: Image):
     arr = np.frombuffer(msg.data, dtype=dtype).reshape(msg.height, msg.width)
     
     # If depth image needs to be flipped horizontally
-    arr = arr[:, ::-1]
+    #arr = arr[:, ::-1]
     return arr
 
 class Yolo3DPublisher(Node):
@@ -55,6 +58,7 @@ class Yolo3DPublisher(Node):
         self.sim = self.client.require('sim')
         self.bowl = self.sim.getObject("./Bowl")
         self.cup = self.sim.getObject("./Cup")
+        #self.banana = self.sim.getObject("./banana")
         self.camera = self.sim.getObject("./camera_ref")
 
     def depth_callback(self, msg):
@@ -77,6 +81,7 @@ class Yolo3DPublisher(Node):
         annotated_frame = cv_image.copy()
 
         for det, cls in zip(results[0].boxes.xyxy, results[0].boxes.cls):
+            
             x1, y1, x2, y2 = map(int, det)
             cx = (x1 + x2) // 2
             cy = (y1 + y2) // 2
@@ -88,29 +93,56 @@ class Yolo3DPublisher(Node):
                                          distCoeffs=self.dist,
                                          P=None)
             u_undist, v_undist = undist[0,0]
-
+            camXAngleInDegrees=57
+            camXResolution=320
+            camYResolution=240
+            camXHalfAngle=camXAngleInDegrees*0.5*math.pi/180
+            camYHalfAngle=(camXAngleInDegrees*0.5*math.pi/180)*camYResolution/camXResolution
+            nearClippingPlane=0.2
+            depthAmplitude=3.34
             # Depth
-            depth = float(self.depth_image[cy, cx])/1000.0
+            depth = float(self.depth_image[cy, cx])/255.0
+
+            self.get_logger().info(f"Raw depth at pixel ({cx}, {cy}): {depth}")
             if depth == 0:
                 continue
-
-            # Project to 3D
-            X = (u_undist - self.cx) * depth / self.fx
-            Y = (v_undist - self.cy) * depth / self.fy
+            depth = depth * depthAmplitude + nearClippingPlane
+            x_angle = ((camXResolution/2) - cx - 0.5) * camXHalfAngle / (camXResolution/2)
+            y_angle = ((camYResolution/2) - cy + 0.5) * camYHalfAngle / (camYResolution/2)
+            X = math.tan(x_angle) * depth
+            Y = math.tan(y_angle) * depth
             Z = depth
-
+            # # Project to 3D
+            # X = (u_undist - self.cx) * depth / self.fx
+            # Y = (v_undist - self.cy) * depth / self.fy
+            # Z = depth
+            self.get_logger().info(f"Pixel: ({cx}, {cy})")
             # Draw bounding box
-            cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0,255,0), 2)
-            cv2.putText(annotated_frame, f"{int(cls)}", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
+            cv2.rectangle(annotated_frame, (int(cx)-2,int(cy)-2), (int(cx)+2, int(cy)+2), (255,255,0), 2)     # anti-aliased edge)
+            #cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0,255,0), 2)
+            # Draw a small circle at that pixel
+            
+
+            #cv2.putText(annotated_frame, f"{int(cls)}", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
             cls_id = int(cls)
-            if cls_id == 41:
-                pos = self.sim.getObjectPosition(self.bowl, self.camera)
-            elif cls_id == 45:
-                pos = self.sim.getObjectPosition(self.cup, self.camera)
-            else:
-                pos = (X, Y, Z)  # fallback: use projected depth
+            # if cls_id == 41:
+            #     pos = self.sim.getObjectPosition(self.bowl, self.camera)
+            if cls_id == 45:
+                
+                pos = [X, Y, Z]
+            
+            # elif cls_id == 46:
+            #     pos = self.sim.getObjectPosition(self.banana, self.camera)
+            # else:
+            pos = [X, Y, Z]  # fallback: use projected depth
+            pos = [float(x) for x in pos]
+            pos_cup = self.sim.getObjectPosition(self.cup, self.camera)
+            self.get_logger().info(f"pos type: {cls_id}, pos: {pos_cup}")
+            self.get_logger().info(f"projected pos type: {cls_id}, pos: {pos}")
+            #self.get_logger().info(f"pos type: {type(pos)}, pos: {pos}")
             # # Publish 3D point
+            
             marker = Marker()
             marker.header.frame_id = "camera_color_optical_frame"
             marker.header.stamp = self.get_clock().now().to_msg()
@@ -145,7 +177,7 @@ class Yolo3DPublisher(Node):
 
             self.tf_broadcaster.sendTransform(t)
         # Publish annotated image
-        annotated_frame = results[0].plot()
+        #annotated_frame = results[0].plot()
 
         # Convert NumPy -> ROS2 Image
         out_msg = Image()
@@ -172,4 +204,3 @@ def main(args=None):
 
 if __name__ == "__main__":
     main()
-
