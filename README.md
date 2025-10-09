@@ -1,3 +1,6 @@
+# WARNING
+### This is a highly experimental branch. Proceed at your own risk.
+
 # IA368ii
 Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
 - `ia368_pkg`: main package with YOLO detection and CoppeliaSim remote API nodes (for now).
