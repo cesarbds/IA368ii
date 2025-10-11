@@ -76,7 +76,7 @@ class KinectNode(Node):
         #data = self.sim.transformBuffer(data,self.sim.buffer_float,farClippingPlane-nearClippingPlane,nearClippingPlane,self.sim.buffer_uint16)
         data = self.sim.unpackFloatTable(data)
         data = np.array(data)
-        data = data.reshape((240, 320))    # reshape to 240 rows × 320 columns
+        data = data.reshape((480, 640))    # reshape to 240 rows × 320 columns
         data = data[::-1,: ] 
         
         data = data.flatten()             # back to 1D
