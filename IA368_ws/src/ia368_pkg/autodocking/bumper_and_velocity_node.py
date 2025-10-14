@@ -22,13 +22,14 @@ class SubscriberVelocity(Node):
     def __init__(self):
         super().__init__('subscriber_velocity')
         self.subscription = self.create_subscription(Twist, 'myRobot/cmd_vel', self.callback, 10)
+        self.r = 0.195/2 #m
 
     def callback(self, msg):
         linVel = msg.linear.x
         rotVel = msg.angular.z
         # Inverse kinematics
-        rightVel = (linVel + L/2 * rotVel)
-        leftVel  = (linVel - L/2 * rotVel)
+        rightVel = (linVel + L/2 * rotVel)/self.r
+        leftVel  = (linVel - L/2 * rotVel)/self.r
         sim.setFloatSignal(str(robotHandle)+"rightVel",rightVel)
         sim.setFloatSignal(str(robotHandle)+"leftVel",leftVel)
 
@@ -61,7 +62,7 @@ while(simulationState != sim.simulation_stopped):
     rclpy.spin_once(subscriber_velocity_node, timeout_sec=0)
 
     simulationState = sim.getSimulationState()
-    sim.step()  # triggers next simulation step
+    #sim.step()  # triggers next simulation step
 
 #sysCall_cleanup():
 publisher_bumper_node.destroy_node()

@@ -11,6 +11,7 @@ class SubscriberVelocity(Node):
         super().__init__('subscriber_velocity')
         self.subscription = self.create_subscription(Twist, 'myRobot/cmd_vel', self.callback, 10)
         self.wheel_base = 0.331     # meters
+        self.r = 0.195/2 #m
          # Connect to CoppeliaSim
         try:
             self.client = RemoteAPIClient()
@@ -31,8 +32,8 @@ class SubscriberVelocity(Node):
         linVel = msg.linear.x
         rotVel = msg.angular.z
         # Inverse kinematics
-        rightVel = (linVel + self.wheel_base /2 * rotVel)
-        leftVel  = (linVel - self.wheel_base /2 * rotVel)
+        rightVel = (linVel + self.wheel_base /2 * rotVel)/self.r
+        leftVel  = (linVel - self.wheel_base /2 * rotVel)/self.r
         self.sim.setJointTargetVelocity(self.rightMotor,rightVel)
         self.sim.setJointTargetVelocity(self.leftMotor,leftVel)
 
