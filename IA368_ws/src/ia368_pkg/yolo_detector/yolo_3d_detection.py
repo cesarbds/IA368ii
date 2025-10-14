@@ -34,7 +34,7 @@ class Yolo3DPublisher(Node):
     def __init__(self):
         super().__init__('yolo_3d_publisher')
 
-        self.model = YOLO("yolov8n.pt")
+        self.model = YOLO("yolo11n-seg.pt") #modelo treinado com 640x480
 
         # Camera intrinsics
         self.fx = 517.306408                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -78,14 +78,39 @@ class Yolo3DPublisher(Node):
             cv_image = img_np
         results = self.model(cv_image, verbose=False)
 
+        camXResolution=cv_image.shape[1]  #320
+        camYResolution=cv_image.shape[0]  #240
         annotated_frame = cv_image.copy()
 
-        for det, cls in zip(results[0].boxes.xyxy, results[0].boxes.cls):
+        # Draw bounding box
+        annotated_frame = results[0].plot()
+        for det, cls, mask in zip(results[0].boxes.xyxy, results[0].boxes.cls, results[0].masks.data):
+            mask = mask.cpu().numpy()
             
+            # Binarize just in case values are between 0–1
+            mask_bin = (mask > 0.5).astype(np.uint8)
+
+            # Compute centroid (only if mask has non-zero area)
+            ys, xs = np.nonzero(mask_bin)
+            if len(xs) == 0 or len(ys) == 0:
+                continue  # skip empty masks
+            cls_id = int(cls)
+            centroid_x = float(np.mean(xs))
+            centroid_y = float(np.mean(ys))
+
+            # Scale down to image size due to yolo being trained on 640x480
+            mask_h, mask_w = mask.shape
+            img_h, img_w = cv_image.shape[:2]
+
+            scale_x = img_w / mask_w  # e.g., 320 / 640 = 0.5
+            scale_y = img_h / mask_h  # e.g., 240 / 480 = 0.5
+
+            centroid_x *= scale_x
+            centroid_y *= scale_y
             x1, y1, x2, y2 = map(int, det)
             cx = (x1 + x2) // 2
             cy = (y1 + y2) // 2
-            
+
             # Undistort point
             pt = np.array([[[cx, cy]]], dtype=np.float32)
             undist = cv2.undistortPoints(pt, 
@@ -94,8 +119,6 @@ class Yolo3DPublisher(Node):
                                          P=None)
             u_undist, v_undist = undist[0,0]
             camXAngleInDegrees=57
-            camXResolution=320
-            camYResolution=240
             camXHalfAngle=camXAngleInDegrees*0.5*math.pi/180
             camYHalfAngle=(camXAngleInDegrees*0.5*math.pi/180)*camYResolution/camXResolution
             nearClippingPlane=0.2
@@ -103,7 +126,7 @@ class Yolo3DPublisher(Node):
             # Depth
             depth = float(self.depth_image[cy, cx])/255.0
 
-            self.get_logger().info(f"Raw depth at pixel ({cx}, {cy}): {depth}")
+            #self.get_logger().info(f"Raw depth at pixel ({cx}, {cy}): {depth}")
             if depth == 0:
                 continue
             depth = depth * depthAmplitude + nearClippingPlane
@@ -112,35 +135,20 @@ class Yolo3DPublisher(Node):
             X = math.tan(x_angle) * depth
             Y = math.tan(y_angle) * depth
             Z = depth
-            # # Project to 3D
-            # X = (u_undist - self.cx) * depth / self.fx
-            # Y = (v_undist - self.cy) * depth / self.fy
-            # Z = depth
-            self.get_logger().info(f"Pixel: ({cx}, {cy})")
-            # Draw bounding box
-            cv2.rectangle(annotated_frame, (int(cx)-2,int(cy)-2), (int(cx)+2, int(cy)+2), (255,255,0), 2)     # anti-aliased edge)
-            #cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0,255,0), 2)
-            # Draw a small circle at that pixel
+
+            
+            # Mask centroid
+            cv2.rectangle(annotated_frame, ((int(centroid_x)-2), (int(centroid_y))-2), ((int(centroid_x)+2), (int(centroid_y))+2), (255, 255, 0), 2)
+
+            #BBox center
+            #cv2.rectangle(annotated_frame, (int(cx)-2,int(cy)-2), (int(cx)+2, int(cy)+2), (255,255,0), 2)     # anti-aliased edge)
             
 
             #cv2.putText(annotated_frame, f"{int(cls)}", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
-            cls_id = int(cls)
-            # if cls_id == 41:
-            #     pos = self.sim.getObjectPosition(self.bowl, self.camera)
-            if cls_id == 45:
-                
-                pos = [X, Y, Z]
-            
-            # elif cls_id == 46:
-            #     pos = self.sim.getObjectPosition(self.banana, self.camera)
-            # else:
             pos = [X, Y, Z]  # fallback: use projected depth
             pos = [float(x) for x in pos]
-            pos_cup = self.sim.getObjectPosition(self.cup, self.camera)
-            self.get_logger().info(f"pos type: {cls_id}, pos: {pos_cup}")
-            self.get_logger().info(f"projected pos type: {cls_id}, pos: {pos}")
-            #self.get_logger().info(f"pos type: {type(pos)}, pos: {pos}")
+
             # # Publish 3D point
             
             marker = Marker()
