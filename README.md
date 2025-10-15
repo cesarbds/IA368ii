@@ -1,7 +1,7 @@
 # IA368ii
 Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
-- `ia368_pkg`: main package with YOLO detection and CoppeliaSim remote API nodes (for now).
-    - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, and autodocking.
+- `ia368_pkg`: main package with YOLO detection, CoppeliaSim remote API nodes and position control nodes, including their respective scenes (for now).
+    - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, autodocking and position control nodes.
 
 # Table of Content
 
@@ -17,6 +17,9 @@ Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2
     3. [Initiate the scene **tf_scene.ttt**](#initiate-the-scene-tf_scenettt)
 3. [Launch CoppeliaSim Remote API Bridge (Autodocking)](#launch-coppeliasim-remote-api-bridge-autodocking)
     1. [Initiate the scene **Evaluation scene3.2_students.ttt**](#initiate-the-scene-evaluation-scene32_studentsttt)
+4. [Launch Position Control Node](#launch-position-control-node)
+    1. [Initiate the scene ***Exercise_position_control.ttt***](#initiate-the-scene-exercise_position_controlttt)
+        1. [Troubleshooting](#troubleshooting-2)
 
 # How to use the workspace
 
@@ -85,7 +88,7 @@ You could use some tips from [Stack Overflow](https://stackoverflow.com/question
 
 ## Initiate the scene **tf_scene.ttt**
 
-The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
+The CoppeliaSim scene is available [here](src/ia368_pkg/yolo_detector/tf_scene.ttt). The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
 ```bash
 ros2 launch ia368_pkg yolo_detection.launch.py dummy:=0
 ```
@@ -100,7 +103,7 @@ This will start the following nodes in the yolo_detector namespace:
 
 ## Initiate the scene **Evaluation scene3.2_students.ttt**
 
-To run the ROS 2 ↔ CoppeliaSim bridge:
+The CoppeliaSim scene is available [here](src/ia368_pkg/autodocking/Evaluation scene3.2_students.ttt). You need to move this scene to your `roomba docking` directory. To run the ROS 2 ↔ CoppeliaSim bridge:
 ```bash
 ros2 launch ia368_pkg remoteAPI_ROS2_bridge.launch.py
 ```
@@ -110,3 +113,21 @@ This will start all autodocking nodes:
 - bumper_and_velocity_node
 - charging_base_node
 - docking_node
+
+# Launch Position Control Node
+
+## Initiate the scene **Exercise_position_control.ttt**
+
+The CoppeliaSim scene is available [here](src/ia368_pkg/position_control/Exercise_position_control.ttt). To run ROS 2 position control scripts:
+```
+ros2 launch ia368_pkg position_control.launch.py
+```
+This will start all position control nodes:
+
+- odom_node
+- position_control_node_students (you should complete this one with your code)
+- target_node
+- velocity_node
+
+### Troubleshooting
+If myRobot starts moving without ROS 2 control, change the *Target velocity*, in *Dynamic properties*, of each motor (rightMotor and leftMotor).
