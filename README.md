@@ -88,7 +88,7 @@ You could use some tips from [Stack Overflow](https://stackoverflow.com/question
 
 ## Initiate the scene **tf_scene.ttt**
 
-The CoppeliaSim scene is available [here](src/ia368_pkg/yolo_detector/tf_scene.ttt). The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
+The CoppeliaSim scene is available [here](IA368_ws/src/ia368_pkg/yolo_detector/tf_scene.ttt). The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node.
 ```bash
 ros2 launch ia368_pkg yolo_detection.launch.py dummy:=0
 ```
@@ -103,7 +103,7 @@ This will start the following nodes in the yolo_detector namespace:
 
 ## Initiate the scene **Evaluation scene3.2_students.ttt**
 
-The CoppeliaSim scene is available [here](src/ia368_pkg/autodocking/Evaluation scene3.2_students.ttt). You need to move this scene to your `roomba docking` directory. To run the ROS 2 ↔ CoppeliaSim bridge:
+The CoppeliaSim scene is available [here](<IA368_ws/src/ia368_pkg/autodocking/Evaluation scene3.2_students.ttt>). You need to move this scene to your `roomba docking` directory. To run the ROS 2 ↔ CoppeliaSim bridge:
 ```bash
 ros2 launch ia368_pkg remoteAPI_ROS2_bridge.launch.py
 ```
@@ -118,7 +118,7 @@ This will start all autodocking nodes:
 
 ## Initiate the scene **Exercise_position_control.ttt**
 
-The CoppeliaSim scene is available [here](src/ia368_pkg/position_control/Exercise_position_control.ttt). To run ROS 2 position control scripts:
+The CoppeliaSim scene is available [here](IA368_ws/src/ia368_pkg/position_control/Exercise_position_control.ttt). To run ROS 2 position control scripts:
 ```
 ros2 launch ia368_pkg position_control.launch.py
 ```
