@@ -21,10 +21,9 @@ class KinectNode(Node):
         try:
             self.client = RemoteAPIClient()
             self.sim = self.client.getObject('sim')
-            #self.simVision = self.sim.getObject('simVision')
-            self.robotHandle = self.sim.getObject('/Pioneer_p3dx')
-            self.depthCam=self.sim.getObject('/Pioneer_p3dx/kinect/depth')
-            self.colorCam=self.sim.getObject('/Pioneer_p3dx/kinect/rgb')
+            self.robotHandle = self.sim.getObject('/myRobot')
+            self.depthCam=self.sim.getObject('/myRobot/kinect/depth')
+            self.colorCam=self.sim.getObject('/myRobot/kinect/rgb')
 
             self.sim.startSimulation()
 
@@ -64,35 +63,26 @@ class KinectNode(Node):
             self.get_logger().warn('Kinect RGB image not found')
     
         # Get vision sensor RGB depth from CoppeliaSim
-        #self.simVision.sensorDepthMapToWorkImg(self.depthCam)
-        #self.simVision.verticalFlipWorkImg(self.depthCam)
-        #self.simVision.workImgToSensorDepthMap(self.depthCam)
         data = self.sim.getVisionSensorDepthBuffer(self.depthCam+self.sim.handleflag_codedstring)
         
         resolution, nearClippingPlane = self.sim.getObjectFloatParameter(self.depthCam,self.sim.visionfloatparam_near_clipping)
         resolution, farClippingPlane = self.sim.getObjectFloatParameter(self.depthCam,self.sim.visionfloatparam_far_clipping)
         nearClippingPlane = nearClippingPlane # we want mm
         farClippingPlane = farClippingPlane # we want mm
-        #data = self.sim.transformBuffer(data,self.sim.buffer_float,farClippingPlane-nearClippingPlane,nearClippingPlane,self.sim.buffer_uint16)
         data = self.sim.unpackFloatTable(data)
         data = np.array(data)
-        data = data.reshape((480, 640))    # reshape to 240 rows × 320 columns
+        data = data.reshape((480, 640))    # reshape to 480 rows × 640 columns
         data = data[::-1,: ] 
         
         data = data.flatten()             # back to 1D
-        data = (data * 255).astype(np.uint8).tolist() 
-        # for i in range(len(data)):
-        #     data[i] = int(data[i]*255)
-        #flip horizontally
-        
+        data = (data * 255).astype(np.uint8).tolist()         
         
         resolution = self.sim.getVisionSensorResolution(self.depthCam)
         
+        # Debug prints
         # print(f"data      : {data}")
         # print(f"Near      : {nearClippingPlane}")
         # print(f"Far       : {farClippingPlane}")
-        
-        
         
         if data is not None:
             # Create image message
@@ -140,9 +130,6 @@ class KinectNode(Node):
             self.camerainfo_publisher.publish(info_msg)
         else:
             self.get_logger().warn('Kinect camera info not available')
-                
-        # except Exception as e:
-        #     self.get_logger().error(f'Error publishing Kinect data: {e}')
 
 def main(args=None):
     rclpy.init(args=args)
