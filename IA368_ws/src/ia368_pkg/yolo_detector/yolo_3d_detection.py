@@ -67,6 +67,9 @@ class Yolo3DPublisher(Node):
     def rgb_callback(self, msg):
         if self.depth_image is None:
             return
+        
+        if msg is None:
+            self.get_logger().warn('RGB image msg is None')
 
         channels = msg.step // msg.width
         img_np = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, channels)
@@ -78,8 +81,16 @@ class Yolo3DPublisher(Node):
             cv_image = img_np
         results = self.model(cv_image, verbose=False)
 
-        camXResolution=cv_image.shape[1]  #320
-        camYResolution=cv_image.shape[0]  #240
+        if results is None:
+            self.get_logger().warn('results is None')
+            return
+        
+        if results[0].masks is None:
+            self.get_logger().warn('results[0].masks is None')
+            return
+
+        camXResolution=cv_image.shape[1]  # 640
+        camYResolution=cv_image.shape[0]  # 480
         annotated_frame = cv_image.copy()
 
         # Draw bounding box
