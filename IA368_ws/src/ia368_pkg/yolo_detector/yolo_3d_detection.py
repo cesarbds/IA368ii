@@ -86,7 +86,6 @@ class Yolo3DPublisher(Node):
             return
         
         if results[0].masks is None:
-            self.get_logger().warn('results[0].masks is None')
             return
 
         camXResolution=cv_image.shape[1]  # 640

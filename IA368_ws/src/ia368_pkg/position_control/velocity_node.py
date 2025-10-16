@@ -1,17 +1,14 @@
 import rclpy
 from rclpy.node import Node
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion, Pose, PoseWithCovariance, Twist, TwistWithCovariance
+from geometry_msgs.msg import Twist
 from coppeliasim_zmqremoteapi_client import *
-from scipy.spatial.transform import Rotation as R
-
 
 class SubscriberVelocity(Node):
     def __init__(self):
         super().__init__('subscriber_velocity')
         self.subscription = self.create_subscription(Twist, 'myRobot/cmd_vel', self.callback, 10)
-        self.wheel_base = 0.331     # meters
-        self.r = 0.195/2 #m
+        self.wheel_base = 0.331  # meters
+        self.radius = 0.195/2    # meters
          # Connect to CoppeliaSim
         try:
             self.client = RemoteAPIClient()
@@ -31,9 +28,9 @@ class SubscriberVelocity(Node):
     def callback(self, msg):
         linVel = msg.linear.x
         rotVel = msg.angular.z
-        # Inverse kinematics
-        rightVel = (linVel + self.wheel_base /2 * rotVel)/self.r
-        leftVel  = (linVel - self.wheel_base /2 * rotVel)/self.r
+        # Inverse kinematics for differential wheeled robot
+        rightVel = (linVel + self.wheel_base /2 * rotVel)/self.radius
+        leftVel  = (linVel - self.wheel_base /2 * rotVel)/self.radius
         self.sim.setJointTargetVelocity(self.rightMotor,rightVel)
         self.sim.setJointTargetVelocity(self.leftMotor,leftVel)
 
