@@ -1,6 +1,6 @@
 # IA368ii
 Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
-- `ia368_pkg`: main package with YOLO detection, CoppeliaSim remote API nodes and position control nodes, including their respective scenes (for now).
+- `ia368_pkg`: main package with YOLO detection, CoppeliaSim remote API nodes, position control nodes and *"pega banana"* nodes, including their respective scenes (for now).
     - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, autodocking and position control nodes.
 
 # Table of Content
@@ -17,9 +17,12 @@ Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2
     3. [Initiate the scene **tf_scene.ttt**](#initiate-the-scene-tf_scenettt)
 3. [Launch CoppeliaSim Remote API Bridge (Autodocking)](#launch-coppeliasim-remote-api-bridge-autodocking)
     1. [Initiate the scene **Evaluation scene3.2_students.ttt**](#initiate-the-scene-evaluation-scene32_studentsttt)
-4. [Launch Position Control Node](#launch-position-control-node)
+4. [Launch Position Control Nodes](#launch-position-control-nodes)
     1. [Initiate the scene ***Exercise_position_control.ttt***](#initiate-the-scene-exercise_position_controlttt)
         1. [Troubleshooting](#troubleshooting-2)
+5. [Launch Pega Banana Nodes](#launch-pega-banana-nodes)
+    1. [Installing dependencies](#installing-dependencies-1)
+    2. [Initiate the scene **pega_banana.ttt**](#initiate-the-scene-pega_bananattt)
 
 # How to use the workspace
 
@@ -114,7 +117,7 @@ This will start all autodocking nodes:
 - charging_base_node
 - docking_node
 
-# Launch Position Control Node
+# Launch Position Control Nodes
 
 ## Initiate the scene **Exercise_position_control.ttt**
 
@@ -127,7 +130,27 @@ This will start all position control nodes:
 - odom_node
 - position_control_node_students (you should complete this one with your code)
 - target_node
-- velocity_node
+- vel_node
 
 ### Troubleshooting
 If myRobot starts moving without ROS 2 control, change the *Target velocity*, in *Dynamic properties*, of each motor (rightMotor and leftMotor).
+
+# Launch Pega Banana Nodes
+
+## Installing dependencies
+
+Just like [Launch YOLO Detection Nodes](#launch-yolo-detection-nodes).
+
+## Initiate the scene **pega_banana.ttt**
+
+The CoppeliaSim scene is available [here](IA368_ws/src/ia368_pkg/yolo_detector/pega_banana.ttt). The YOLO detection launch file supports a dummy argument (0 or 1) to optionally run the dummy node. To run ROS 2 *"pega banana"* scripts:
+```
+ros2 launch ia368_pkg pega_banana.launch.py dummy:=0
+```
+This will start all position control nodes:
+
+- kinect_node
+- tf_node
+- yolo_node
+- dummy_creation_node (optional, depending on dummy)
+- vel_node
