@@ -38,6 +38,8 @@ setup(
 	        "pos_control_node = position_control.position_control_node_students:main",
 	        "vel_node = position_control.velocity_node:main",
 	        "target_node = position_control.target_node:main",
+            "lidar_node = slam_toolbox.lidar:main",
+            "tf_node_slam_toolbox = slam_toolbox.tf_node:main",
         ],
     },
 )
