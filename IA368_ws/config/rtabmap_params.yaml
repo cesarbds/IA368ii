@@ -1,0 +1,8 @@
+rtabmap:
+  ros__parameters:
+    frame_id: base_link
+    qos: 1
+    subscribe_odom_info: False
+    subscribe_depth: True
+    Grid/FromDepth: True
+    approx_sync: True

@@ -40,6 +40,8 @@ setup(
 	        "target_node = position_control.target_node:main",
             "lidar_node = slam_toolbox.lidar:main",
             "tf_node_slam_toolbox = slam_toolbox.tf_node:main",
+            "tf_node_rtabmap_rgb = rtabmap.tf_node:main",
+            "kinect_node_rtabmap_rgb = rtabmap.kinect:main",
         ],
     },
 )

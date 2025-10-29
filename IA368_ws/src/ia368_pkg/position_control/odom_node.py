@@ -16,7 +16,7 @@ class OdomNode(Node):
 
         # Connect to CoppeliaSim
         try:
-            self.client = RemoteAPIClient()
+            self.client = RemoteAPIClient() # put your IP/hostname here, like 'host=meu_PC'
             self.sim = self.client.getObject('sim')
             self.get_logger().info('Connected to CoppeliaSim successfully.')
 
