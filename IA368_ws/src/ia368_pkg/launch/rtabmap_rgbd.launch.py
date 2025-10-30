@@ -38,19 +38,17 @@ def generate_launch_description():
             executable='rtabmap',
             output='screen',
             parameters=parameters,
-            remappings=remappings,
             arguments=['-d']
         ),
         Node(
             package='rtabmap_viz',
             executable='rtabmap_viz',
             output='screen',
-            parameters=parameters,
-            remappings=remappings
+            parameters=parameters
         ),
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
             output='screen',
-            arguments=["0", "0", "0", "-1.57", "0", "-1.57", "camera_link", "kinect"])
+            arguments=["0", "0", "0", "-1.57", "0", "-1.57", "base_link", "kinect"])
     ])

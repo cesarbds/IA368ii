@@ -50,7 +50,6 @@ class CoppeliaTFPublisher(Node):
         # Build and send multiple transforms
         transforms = [
             self.get_transform(self.ground_truth, 'base_link', -1, 'odom'),
-            self.get_transform(self.kinectHandle, 'camera_link', self.ground_truth, 'base_link')
         ]
 
         for t in transforms:

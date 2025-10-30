@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Quaternion
-from coppeliasim_zmqremoteapi_client import *
+from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 from scipy.spatial.transform import Rotation as R
 
 class OdomNode(Node):
