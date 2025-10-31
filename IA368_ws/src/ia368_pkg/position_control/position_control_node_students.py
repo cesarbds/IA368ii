@@ -87,8 +87,9 @@ class SiegwartController(Node):
         # backwardAllowed: This boolean variable should switch the between the two controllers
         # useConstantSpeed: Turn on constant speed option
         
-        vu = ????; # [m/s]
-        omega = ???? # [rad/s]
+        # TODO: insert your code for vu and omega
+        vu = 0 # [m/s]
+        omega = 0 # [rad/s]
         twist.linear.x = vu
         twist.angular.z = omega
         return twist, rho
