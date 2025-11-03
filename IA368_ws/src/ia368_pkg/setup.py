@@ -42,6 +42,7 @@ setup(
             "tf_node_slam_toolbox = slam_toolbox.tf_node:main",
             "tf_node_rtabmap_rgb = rtabmap.tf_node:main",
             "kinect_node_rtabmap_rgb = rtabmap.kinect:main",
+            "ground_truth_node = nav2.ground_truth_node:main"
         ],
     },
 )
