@@ -16,6 +16,7 @@ class PublisherLaserscan(Node):
         try:
             self.client = RemoteAPIClient() # put your IP/hostname here, like 'host=meu_PC'
             self.sim = self.client.getObject('sim')
+            self.sim.startSimulation()
             self.robotHandle = self.sim.getObject('/myRobot')
             
             self.get_logger().info('Connected to CoppeliaSim successfully')
