@@ -1,7 +1,15 @@
-from launch import LaunchDescription
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
-def generate_launch_description():
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import PathJoinSubstitution
+
+def generate_launch_description():  
+    remappings = [
+          ('/myRobot/cmd_vel', '/cmd_vel')]
+    
     return LaunchDescription([
         Node(
             package='ia368_pkg',
@@ -16,6 +24,19 @@ def generate_launch_description():
         Node(
             package='ia368_pkg',
             executable='vel_node',
+            remappings=remappings,
             output='screen'
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('slam_toolbox'),
+                    'launch',
+                    'online_async_launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'slam_params_file': 'config/mapper_params_online_async.yaml'
+            }.items()
         )
     ])
