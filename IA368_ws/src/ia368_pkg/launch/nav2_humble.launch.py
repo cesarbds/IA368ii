@@ -31,7 +31,7 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                'params_file': 'config/nav2_params.yaml'
+                'params_file': 'config/nav2_params_humble.yaml'
             }.items()
         )
     ])
