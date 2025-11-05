@@ -22,16 +22,16 @@ def generate_launch_description():
             executable='ground_truth_node',
             output='screen'
         ),
-        #IncludeLaunchDescription(
-        #    PythonLaunchDescriptionSource([
-        #        PathJoinSubstitution([
-        #            FindPackageShare('nav2_bringup'),
-        #            'launch',
-        #            'navigation_launch.py'
-        #        ])
-        #    ]),
-        #    launch_arguments={
-        #        'params_file': 'config/nav2_params.yaml'
-        #    }.items()
-        #)
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('nav2_bringup'),
+                    'launch',
+                    'navigation_launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'params_file': 'config/nav2_params.yaml'
+            }.items()
+        )
     ])
