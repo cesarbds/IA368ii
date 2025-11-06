@@ -2,11 +2,25 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
+
+    nav2_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('nav2_bringup'),
+                'launch',
+                'navigation_launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'params_file': 'config/nav2_params_humble.yaml'
+        }.items()
+    )
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
@@ -22,16 +36,6 @@ def generate_launch_description():
             executable='ground_truth_node',
             output='screen'
         ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('nav2_bringup'),
-                    'launch',
-                    'navigation_launch.py'
-                ])
-            ]),
-            launch_arguments={
-                'params_file': 'config/nav2_params_humble.yaml'
-            }.items()
-        )
+        TimerAction(
+            actions = [nav2_launch], period = 10.0)
     ])
