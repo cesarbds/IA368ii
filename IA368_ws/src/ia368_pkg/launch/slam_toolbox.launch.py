@@ -27,6 +27,11 @@ def generate_launch_description():
             remappings=remappings,
             output='screen'
         ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            output='screen',
+            arguments=["0.0778096911698893", "0", "0.24980849049326312", "0.0", "0.0016353724914138718", "0", "0.9999999", "base_link", "laser_link"]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([

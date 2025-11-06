@@ -19,7 +19,6 @@ class CoppeliaTFPublisher(Node):
             # Get object handles
             self.robotHandle = self.sim.getObject('/myRobot')
             self.ground_truth = self.sim.getObject("/myRobot/Ground_truth")
-            self.sensorRefHandle = self.sim.getObject("/myRobot/LaserScanner_2D/Laserscanner_ref")
             
             self.get_logger().info('Connected to CoppeliaSim successfully')
         except Exception as e:
@@ -51,7 +50,6 @@ class CoppeliaTFPublisher(Node):
         # Build and send multiple transforms
         transforms = [
             self.get_transform(self.ground_truth, 'base_link', -1, 'odom'),
-            self.get_transform(self.sensorRefHandle, 'laser_link', self.ground_truth, 'base_link')
         ]
 
         for t in transforms:
