@@ -106,7 +106,7 @@ This will start the following nodes in the yolo_detector namespace:
 
 ## Initiate the scene **Evaluation scene3.2_students.ttt**
 
-The CoppeliaSim scene is available [here](<IA368_ws/src/ia368_pkg/autodocking/Evaluation scene3.2_students.ttt>). You need to move this scene to your `roomba docking` directory. To run the ROS 2 ↔ CoppeliaSim bridge:
+The CoppeliaSim scene is available [here](https://drive.google.com/file/d/1kWkmB_3bF3PY6_6VbIV730ZlBTSmm2EU/view?usp=sharing). You need to move this scene to your `roomba docking` directory. To run the ROS 2 ↔ CoppeliaSim bridge:
 ```bash
 ros2 launch ia368_pkg remoteAPI_ROS2_bridge.launch.py
 ```
