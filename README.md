@@ -1,5 +1,5 @@
 # IA368ii
-Official repository for IA368ii 2025S2 classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
+Official repository for IA368ii classes. This repository contains a ROS 2 workspace named `IA368_ws`, which constains packages developed during the classes. The workspace contains:
 - `ia368_pkg`: main package with YOLO detection, CoppeliaSim remote API nodes, position control nodes and *"pega banana"* nodes, including their respective scenes (for now).
     - Nodes for Kinect, TF, YOLO 3D detection, dummy creation, autodocking and position control nodes.
 
