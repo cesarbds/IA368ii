@@ -21,6 +21,7 @@ class KinectNode(Node):
         try:
             self.client = RemoteAPIClient()
             self.sim = self.client.getObject('sim')
+            #self.simVision = self.sim.getObject('simVision')
             self.robotHandle = self.sim.getObject('/myRobot')
             self.depthCam=self.sim.getObject('/myRobot/kinect/depth')
             self.colorCam=self.sim.getObject('/myRobot/kinect/rgb')
@@ -42,6 +43,7 @@ class KinectNode(Node):
         # Get vision sensor RGB image from CoppeliaSim
         data, resolution = self.sim.getVisionSensorImg(self.colorCam)
         data = self.sim.transformImage(data,resolution,4)
+        rgb_resolution = resolution
         
         if data is not None:
             # Create image message
@@ -63,26 +65,35 @@ class KinectNode(Node):
             self.get_logger().warn('Kinect RGB image not found')
     
         # Get vision sensor RGB depth from CoppeliaSim
+        #self.simVision.sensorDepthMapToWorkImg(self.depthCam)
+        #self.simVision.verticalFlipWorkImg(self.depthCam)
+        #self.simVision.workImgToSensorDepthMap(self.depthCam)
         data = self.sim.getVisionSensorDepthBuffer(self.depthCam+self.sim.handleflag_codedstring)
         
         resolution, nearClippingPlane = self.sim.getObjectFloatParameter(self.depthCam,self.sim.visionfloatparam_near_clipping)
         resolution, farClippingPlane = self.sim.getObjectFloatParameter(self.depthCam,self.sim.visionfloatparam_far_clipping)
         nearClippingPlane = nearClippingPlane # we want mm
         farClippingPlane = farClippingPlane # we want mm
+        #data = self.sim.transformBuffer(data,self.sim.buffer_float,farClippingPlane-nearClippingPlane,nearClippingPlane,self.sim.buffer_uint16)
+        depth_resolution = self.sim.getVisionSensorResolution(self.depthCam)
+        depth_width, depth_height = depth_resolution
         data = self.sim.unpackFloatTable(data)
         data = np.array(data)
-        data = data.reshape((480, 640))    # reshape to 480 rows × 640 columns
+        data = data.reshape((depth_height, depth_width))
         data = data[::-1,: ] 
         
         data = data.flatten()             # back to 1D
-        data = (data * 255).astype(np.uint8).tolist()         
+        data = (data * 255).astype(np.uint8).tolist() 
+        # for i in range(len(data)):
+        #     data[i] = int(data[i]*255)
+        #flip horizontally
         
-        resolution = self.sim.getVisionSensorResolution(self.depthCam)
         
-        # Debug prints
         # print(f"data      : {data}")
         # print(f"Near      : {nearClippingPlane}")
         # print(f"Far       : {farClippingPlane}")
+        
+        
         
         if data is not None:
             # Create image message
@@ -91,11 +102,11 @@ class KinectNode(Node):
             # Fill image data
             depth_msg.header.stamp = self.get_clock().now().to_msg()
             depth_msg.header.frame_id = "kinect"
-            depth_msg.height = resolution[1]
-            depth_msg.width = resolution[0]
+            depth_msg.height = depth_height
+            depth_msg.width = depth_width
             depth_msg.encoding = '8UC1'
             depth_msg.is_bigendian = 0
-            depth_msg.step = resolution[0]*2
+            depth_msg.step = depth_width
             depth_msg.data = data
             
             # Publish the message
@@ -103,7 +114,7 @@ class KinectNode(Node):
         else:
             self.get_logger().warn('Kinect depth image not found')
 
-        if resolution is not None:
+        if rgb_resolution is not None:
             # Publish camera info
             info_msg = CameraInfo()
             info_msg.roi = RegionOfInterest()
@@ -111,12 +122,18 @@ class KinectNode(Node):
             # Fill message
             info_msg.header.stamp = self.get_clock().now().to_msg()
             info_msg.header.frame_id = "kinect"
-            info_msg.height = resolution[1]
-            info_msg.width = resolution[0]
+            info_msg.height = rgb_resolution[1]
+            info_msg.width = rgb_resolution[0]
             info_msg.distortion_model = 'plumb_bob'
             info_msg.d = [0.262383,-0.953104,-0.005358,0.002628,1.163314]
-            info_msg.k = [517.306408, 0.0, 318.643040, 0.0, 516.469215, 255.313989, 0.0, 0.0, 1.0]
-            info_msg.p = [517.306408, 0.0, 318.643040, 0.0, 0.0, 516.469215, 255.313989, 0.0, 0.0, 0.0, 1.0, 0.0]
+            scale_x = rgb_resolution[0] / 640.0
+            scale_y = rgb_resolution[1] / 480.0
+            info_msg.k = [517.306408 * scale_x, 0.0, 318.643040 * scale_x,
+                          0.0, 516.469215 * scale_y, 255.313989 * scale_y,
+                          0.0, 0.0, 1.0]
+            info_msg.p = [517.306408 * scale_x, 0.0, 318.643040 * scale_x, 0.0,
+                          0.0, 516.469215 * scale_y, 255.313989 * scale_y, 0.0,
+                          0.0, 0.0, 1.0, 0.0]
             info_msg.binning_x = 0
             info_msg.binning_y = 0
             
@@ -130,6 +147,9 @@ class KinectNode(Node):
             self.camerainfo_publisher.publish(info_msg)
         else:
             self.get_logger().warn('Kinect camera info not available')
+                
+        # except Exception as e:
+        #     self.get_logger().error(f'Error publishing Kinect data: {e}')
 
 def main(args=None):
     rclpy.init(args=args)
