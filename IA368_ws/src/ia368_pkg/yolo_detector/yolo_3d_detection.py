@@ -56,8 +56,6 @@ class Yolo3DPublisher(Node):
         # Connect to CoppeliaSim
         self.client = RemoteAPIClient()
         self.sim = self.client.require('sim')
-        self.bowl = self.sim.getObject("./Bowl")
-        self.cup = self.sim.getObject("./Cup")
         #self.banana = self.sim.getObject("./banana")
         self.camera = self.sim.getObject("./camera_ref")
 
