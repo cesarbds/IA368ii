@@ -17,7 +17,7 @@ class CoppeliaTFPublisher(Node):
         self.sim = self.client.require('sim')
 
         # Get object handles
-        self.ground_truth = self.sim.getObject("./base_link")
+        self.ground_truth = self.sim.getObject("./myRobot")
         self.sensor_ref = self.sim.getObject("./camera_ref")
 
         # Timer to publish transforms periodically
