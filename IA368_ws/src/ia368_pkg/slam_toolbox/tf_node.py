@@ -25,8 +25,11 @@ class CoppeliaTFPublisher(Node):
             self.get_logger().error(f'Failed to connect to CoppeliaSim: {e}')
             return
 
-        # Timer to publish transforms periodically
-        self.timer = self.create_timer(0.05, self.publish_transforms)
+        # Request 50 Hz; the actual rate depends on Coppelia remote-API latency.
+        self.tf_publish_rate = self.declare_parameter("tf_publish_rate", 50.0).value
+        if self.tf_publish_rate <= 0.0:
+            raise ValueError("tf_publish_rate must be positive")
+        self.timer = self.create_timer(1.0 / self.tf_publish_rate, self.publish_transforms)
 
     def get_transform(self, child_handle, child_frame, parent_handle, parent_frame):
         pos = self.sim.getObjectPosition(child_handle, parent_handle)

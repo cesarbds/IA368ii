@@ -4,6 +4,9 @@ from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
+from tf2_ros import Buffer, TransformListener
+from rclpy.duration import Duration
+from rclpy.time import Time
 
 class PublisherLaserscan(Node):
     def __init__(self):
@@ -11,6 +14,12 @@ class PublisherLaserscan(Node):
 
         # Create publisher for laserscan
         self.laserscan_publisher = self.create_publisher(LaserScan,'/myRobot/scan', 10)
+
+        # Receive TF on a separate executor while remote API calls or TF waits block.
+        self.tf_buffer = Buffer()
+        self.tf_listener_node = Node("laserscan_tf_listener")
+        self.tf_listener = TransformListener(
+            self.tf_buffer, self.tf_listener_node, spin_thread=True)
 
         # Connect to CoppeliaSim
         try:
@@ -45,8 +54,22 @@ class PublisherLaserscan(Node):
     def publish_laserscan(self):
         distance = []
         distance = self.sim.getFloatArrayProperty(self.robotHandle, "signal.distSignal", {'noError' : True})
+        if not distance:
+            return
+
         self.laserscan_msg.header.stamp = self.get_clock().now().to_msg()
         self.laserscan_msg.ranges = distance
+
+        # Keep TF publishing in its own node. Release a scan only after its
+        # timestamp is covered, rather than overfilling SLAM's async scan queue.
+        if not self.tf_buffer.can_transform(
+                'odom', self.laserscan_msg.header.frame_id,
+                Time.from_msg(self.laserscan_msg.header.stamp),
+                timeout=Duration(seconds=1.0)):
+            self.get_logger().warning(
+                'Skipping scan: odom -> laser_link TF unavailable at scan timestamp',
+                throttle_duration_sec=5.0)
+            return
 
         # Publish the message
         self.laserscan_publisher.publish(self.laserscan_msg)
@@ -59,6 +82,8 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
+        node.tf_listener.unregister()
+        node.tf_listener_node.destroy_node()
         node.destroy_node()
         rclpy.shutdown()
 

@@ -19,6 +19,7 @@ def generate_launch_description():
         Node(
             package='ia368_pkg',
             executable='tf_node_slam_toolbox',
+            parameters=[{'tf_publish_rate': 50.0, 'use_sim_time': False}],
             output='screen'
         ),
         Node(
@@ -41,7 +42,9 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                'slam_params_file': 'config/mapper_params_online_async.yaml'
+                'slam_params_file': 'config/mapper_params_online_async.yaml',
+                # The Coppelia bridge timestamps scans and TF with wall time.
+                'use_sim_time': 'false'
             }.items()
         )
     ])
