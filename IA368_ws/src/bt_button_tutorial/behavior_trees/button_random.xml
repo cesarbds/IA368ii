@@ -1,0 +1,29 @@
+<root BTCPP_format="4" main_tree_to_execute="Main">
+  <BehaviorTree ID="Main">
+    <Sequence>
+      <Wait seconds="5"/>
+      <Fallback>
+        <Sequence>
+          <WaitForButton seconds="5"/>
+          <Print message="Pressed button"/>
+          <SubTree ID="CheckRandomNumber"/>
+        </Sequence>
+        <Print message="No button"/>
+      </Fallback>
+    </Sequence>
+  </BehaviorTree>
+
+  <!--
+    RandomOdd returns SUCCESS for odd and FAILURE for even.
+    Fallback uses that status to select the message to print.
+  -->
+  <BehaviorTree ID="CheckRandomNumber">
+    <Fallback>
+      <Sequence>
+        <RandomOdd number="{random_number}"/>
+        <Print message="Random number is odd"/>
+      </Sequence>
+      <Print message="Random number is even"/>
+    </Fallback>
+  </BehaviorTree>
+</root>

@@ -1,0 +1,14 @@
+<root BTCPP_format="4" main_tree_to_execute="Main">
+  <BehaviorTree ID="Main">
+    <Sequence>
+      <Wait seconds="5"/>
+      <Fallback>
+        <Sequence>
+          <WaitForButton seconds="5"/>
+          <Print message="Pressed button"/>
+        </Sequence>
+        <Print message="No button"/>
+      </Fallback>
+    </Sequence>
+  </BehaviorTree>
+</root>
